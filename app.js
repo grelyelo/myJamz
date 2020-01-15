@@ -1,9 +1,9 @@
-var express = require("express"),
+const express = require("express"),
    mongoose = require("mongoose"),
- bodyParser = require("body-parser")
+ bodyParser = require("body-parser"),
+        url = require("url");
 
-var app = express()
-
+var app = express();
 mongoose.connect("mongodb://localhost:27017/SpotifyClone", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -27,6 +27,16 @@ app.get("/", function(req, res){
     res.redirect("/songs");
 });
 
+//Index
+app.get("/songs", function(req, res) {
+    Song.find({}, function(err, songs) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.render("songs", {songs: songs})
+        }
+    })
+});
 
 //New Song form
 app.get("/songs/new", function(req, res) {
@@ -37,7 +47,33 @@ app.get("/songs/new", function(req, res) {
             res.render("new", {songs: songs})
         }
     })
-})
+});
+
+
+//Search for songs based on some criteria
+app.get("/songs/search", function(req, res){
+    var artist = req.query.artist,
+        title  = req.query.title;
+
+    var searchObject;
+
+    if(artist && title) {
+        searchObject = {artist: artist, title: title};
+    } else if (artist) {
+        searchObject = {artist: artist};
+    } else if (title) {
+        searchObject = {title: title};
+    }
+    //Find by search criteria. 
+    Song.find(searchObject, function(err, songs) {
+            if(err) {
+                console.log(err);
+            } else {
+                res.render("songs", {songs: songs})
+            }
+    })  
+});
+
 //Show
 app.get("/songs/:id", function(req, res){
     Song.findById(req.params.id, function(err, foundSong){
@@ -49,16 +85,7 @@ app.get("/songs/:id", function(req, res){
     })
 });
 
-//Index
-app.get("/songs", function(req, res) {
-    Song.find({}, function(err, songs) {
-        if(err) {
-            console.log(err);
-        } else {
-            res.render("songs", {songs: songs})
-        }
-    })
-});
+
 
 
 
