@@ -1,9 +1,12 @@
 <%- include("partials/header") %>
-<%- include("partials/songList") %>
-<form action="/songs" method="POST">
-    <div class="form-group"><input class='form-control' type="text" name="artist" id="" placeholder="artist" ></div>
-    <div class="form-group"><input class='form-control' type="text" name="title" id="" placeholder="title"></div>
-    <div class="form-group"><button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-    </div>
-</form>    
+<!-- Side navigation -->
+<%- include("partials/sidenav") %>
+<!-- Page content -->
+<div class="main">
+    <form action="/songs" method="POST">
+        <input type="text" name="artist" placeholder="artist" >
+        <input type="text" name="title" placeholder="title">
+        <button type="submit">Submit</button>
+    </form>        
+</div> 
 <%- include("partials/footer") %>
