@@ -55,6 +55,7 @@ app.get("/songs/new", function(req, res) {
 //Search for songs based on some criteria
 app.get("/songs/search/:by/:term", function(req, res){
     var term = req.params.term;
+    //Use regular expression to support partial mapping
     var termRegex = new RegExp(escapeStringRegexp(term));
     var by    = req.params.by;
     var query; 
