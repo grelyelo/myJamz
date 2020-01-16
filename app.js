@@ -1,7 +1,8 @@
 const express = require("express"),
    mongoose = require("mongoose"),
  bodyParser = require("body-parser"),
-        url = require("url");
+        url = require("url"),
+escapeStringRegexp = require('escape-string-regexp')
 
 var app = express();
 mongoose.connect("mongodb://localhost:27017/SpotifyClone", {useNewUrlParser: true});
@@ -23,9 +24,9 @@ var Song = mongoose.model("Song", songSchema);
 //RESTful routes 
 
 //Index Redirect
-app.get("/", function(req, res){
-    res.redirect("/songs");
-});
+// app.get("/", function(req, res){
+//     res.redirect("/songs");
+// });
 
 //Index
 app.get("/songs", function(req, res) {
@@ -33,7 +34,8 @@ app.get("/songs", function(req, res) {
         if(err) {
             console.log(err);
         } else {
-            res.render("songs", {songs: songs})
+            //returns songs in JSON format. songs is an array of songs. 
+            res.json(songs)
         }
     })
 });
@@ -51,34 +53,35 @@ app.get("/songs/new", function(req, res) {
 
 
 //Search for songs based on some criteria
-app.get("/songs/search", function(req, res){
-    var artist = req.query.artist,
-        title  = req.query.title;
+app.get("/songs/search/:by/:term", function(req, res){
+    var term = req.params.term;
+    var by    = req.params.by;
+    var query; 
+    //Want to search for query for both 
+    //artist and title. perform two searches. 
 
-    var searchObject;
 
-    if(artist && title) {
-        searchObject = {artist: artist, title: title};
-    } else if (artist) {
-        searchObject = {artist: artist};
-    } else if (title) {
-        searchObject = {title: title};
+    if(by === 'artist') {
+        query = {artist: term}
+    } else if(by === 'title') {
+        query = {title: term}
     }
     //Find by search criteria. 
-    Song.find(searchObject, function(err, songs) {
-            if(err) {
-                console.log(err);
-            } else {
-                res.render("songs", {songs: songs})
-            }
-    })  
+    
+    Song.find(query, function(err, songs) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.json(songs)
+        }
+    })   
 });
 
 //Show
 app.get("/songs/:id", function(req, res){
     Song.findById(req.params.id, function(err, foundSong){
         if(!err) {
-            res.render("songs", {songs: [foundSong]})
+            res.json([foundSong])
         } else {
             console.log(err);
         }
