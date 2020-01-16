@@ -24,9 +24,9 @@ var Song = mongoose.model("Song", songSchema);
 //RESTful routes 
 
 //Index Redirect
-// app.get("/", function(req, res){
-//     res.redirect("/songs");
-// });
+app.get("/", function(req, res){
+    res.render("main");
+});
 
 //Index
 app.get("/songs", function(req, res) {
