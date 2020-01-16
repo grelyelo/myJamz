@@ -4,14 +4,19 @@
 
 //Add event listener to sidebar elements to display appropriate content.
 //onclick, load the page. 
-$( "#home" ).click(function() {
-    //For now, we shall perform a search for the songs, 
-    $("#songs").empty();
-    $.getJSON("/songs", function(songs) {
+
+
+function fillSongs(url) {
+    $.getJSON(url, function(songs) {
         for(var i = 0; i < songs.length; i++){
             $("#songs").append('<li>' + songs[i].artist  + " - " + songs[i].title + '</li>')
         }
-    });    
+    });
+}
+$( "#home" ).click(function() {
+    //For now, we shall perform a search for the songs, 
+    $("#songs").empty();
+    fillSongs("/songs")  
     //parse the json formatted data,
     //and render the elements
 });
@@ -22,4 +27,13 @@ $( "#browse" ).click(function() {
 
 $( "#radio" ).click(function() {
     alert( "Handler for .click() called on #radio element" );
+});
+
+//This code is stolen. 
+$("#searchBox").keyup(function(){
+    $("#songs").empty();
+    var filter = $(this).val()    
+    fillSongs("/songs/search/artist/" + filter); 
+
+    // Update the count
 });
