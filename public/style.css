@@ -2,7 +2,7 @@ body {
     background-color: #111;
 }
 
-.sidenav {
+#sidenav {
     height: 100%;
     width: 160px;
     position: fixed;
@@ -16,7 +16,7 @@ body {
     padding-top: 20px;
 }
 
-.sidenav a {
+#sidenav a {
     padding: 6px 8px 6px 16px;
     color: grey;
     font-size: 25px;
@@ -25,11 +25,11 @@ body {
     display: block;
 }
 
-.sidenav a:hover {
+#sidenav a:hover {
     color: white;
 } 
 
-.main {
+#main {
     margin-left: 160px;
     padding: 0 10px;
     color: grey;
