@@ -55,16 +55,14 @@ app.get("/songs/new", function(req, res) {
 //Search for songs based on some criteria
 app.get("/songs/search/:by/:term", function(req, res){
     var term = req.params.term;
+    var termRegex = new RegExp(escapeStringRegexp(term));
     var by    = req.params.by;
     var query; 
-    //Want to search for query for both 
-    //artist and title. perform two searches. 
-
 
     if(by === 'artist') {
-        query = {artist: term}
+        query = {artist: termRegex}
     } else if(by === 'title') {
-        query = {title: term}
+        query = {title: termRegex}
     }
     //Find by search criteria. 
     
