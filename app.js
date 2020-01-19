@@ -5,7 +5,7 @@ const express = require("express"),
 escapeStringRegexp = require('escape-string-regexp')
 
 var app = express();
-mongoose.connect("mongodb://localhost:27017/myJamz", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
@@ -15,31 +15,28 @@ const port = 3000,
       host = "127.0.0.1";
 
 //Schema for individual songs
-var songSchema = new mongoose.Schema({
+const songSchema = new mongoose.Schema({
     artist: String,
-    title: String
+    title: String, 
 });
 
-//For now, before we figure out how to get binary images from db, just store an image url. 
-//Later, we can create an API which returns a specific release's image. 
+const Song    = mongoose.model("song", songSchema);
 
 //Schema for EPs, Albums, Singles, etc. 
-var releaseSchema = new mongoose.Schema({
+const releaseSchema = new mongoose.Schema({
+    artist: String,
     title: String,
-    titleArtist: String,
-    tracks: [songSchema], 
-    artUrl: String
+    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}]
 });
 
-var Song = mongoose.model("Song", songSchema);
-var Release = mongoose.model("Release", releaseSchema);
+const Release = mongoose.model("release", releaseSchema);
+
 //RESTful routes 
-
-
 
 //Index Redirect
 app.get("/", function(req, res){
-    res.render("main");
+
+    res.render("main", );
 });
 
 //Index
@@ -54,15 +51,19 @@ app.get("/songs", function(req, res) {
     })
 });
 
-//New Song form
-app.get("/songs/new", function(req, res) {
-    Song.find({}, function(err, songs) {
-        if(err) {
-            console.log(err);
+app.get("/releases", function(req, res){
+    Release.find({}, function(err, releases){
+        if(!err) {
+            res.json(releases);
         } else {
-            res.render("new", {songs: songs})
+            console.log(err);
         }
     })
+});
+
+//New Song form
+app.get("/songs/new", function(req, res) {
+    res.render("new")
 });
 
 
@@ -90,16 +91,28 @@ app.get("/songs/search/:by/:term", function(req, res){
     })   
 });
 
-//Show
+//Show songs
 app.get("/songs/:id", function(req, res){
     Song.findById(req.params.id, function(err, foundSong){
         if(!err) {
-            res.json([foundSong])
+            res.json(foundSong);
+        } else {
+            console.log(err)
+        }
+    })
+});
+
+//Show a release
+app.get("/releases/:id", function(req, res) {
+    Release.findById(req.params.id, function(err, foundRelease){
+        if(!err) {
+            res.json(foundRelease)
         } else {
             console.log(err);
         }
     })
-});
+})
+
 
 //Create
 app.post("/songs", function(req, res){
@@ -118,6 +131,11 @@ app.post("/songs", function(req, res){
         }
     });
 });
+
+
+//Album Routes
+
+
 
 app.listen(port, host, function(){
     console.log(`App is listening on ${host}:${port}`);
