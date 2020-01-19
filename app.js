@@ -56,7 +56,7 @@ app.get("/songs/new", function(req, res) {
 app.get("/songs/search/:by/:term", function(req, res){
     var term = req.params.term;
     //Use regular expression to support partial mapping
-    var termRegex = new RegExp(escapeStringRegexp(term));
+    var termRegex = new RegExp(escapeStringRegexp(term), "i");
     var by    = req.params.by;
     var query; 
 
@@ -107,7 +107,6 @@ app.post("/songs", function(req, res){
             res.redirect("/songs");
         }
     });
-    //res.send("hit the /songs post route");
 });
 
 app.listen(port, host, function(){
