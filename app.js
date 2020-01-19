@@ -14,21 +14,26 @@ app.set("view engine", "ejs");
 const port = 3000,
       host = "127.0.0.1";
 
+//Schema for different types of pictures, 
+//such as album art, profile pictures, etc. 
+const pictureSchema  = new mongoose.Schema({
+    picURL: String
+});
+const Picture = mongoose.model("picture", pictureSchema);
 //Schema for individual songs
 const songSchema = new mongoose.Schema({
     artist: String,
     title: String, 
 });
-
 const Song    = mongoose.model("song", songSchema);
 
 //Schema for EPs, Albums, Singles, etc. 
 const releaseSchema = new mongoose.Schema({
     artist: String,
     title: String,
-    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}]
+    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}],
+    releaseArt: [{type: mongoose.Schema.Types.ObjectId, ref: 'picture'}]
 });
-
 const Release = mongoose.model("release", releaseSchema);
 
 //RESTful routes 
