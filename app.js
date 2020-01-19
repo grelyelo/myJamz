@@ -36,7 +36,7 @@ const Release = mongoose.model("release", releaseSchema);
 //Index Redirect
 app.get("/", function(req, res){
 
-    res.render("main", );
+    res.render("main");
 });
 
 //Index
