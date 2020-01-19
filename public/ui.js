@@ -5,6 +5,10 @@
 //Add event listener to sidebar elements to display appropriate content.
 //onclick, load the page. 
 
+const endpoints = {
+    artist: "/songs/search/artist/",
+    title: "/songs/search/title/"
+}
 
 function fillSongs(url) {
     $.getJSON(url, function(songs) {
@@ -31,9 +35,10 @@ $( "#radio" ).click(function() {
 
 //This code is stolen. 
 $("#searchBox").keyup(function(){
+    //Todo: check whether the #songs is empty first. 
     $("#songs").empty();
-    var filter = $(this).val()    
-    fillSongs("/songs/search/artist/" + filter); 
+    let filter = $(this).val();
 
-    // Update the count
+    fillSongs(endpoints["artist"] + filter);
+    fillSongs(endpoints["title"]  + filter);
 });
