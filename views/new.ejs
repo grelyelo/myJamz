@@ -1,5 +1,14 @@
+<%- include("partials/header") %>
+<!-- Side navigation -->
+<%- include("partials/sidenav") %>
+
+<div id="main"><%- include("partials/searchBar") %>
     <form action="/songs" method="POST">
         <input type="text" name="artist" placeholder="artist" >
         <input type="text" name="title" placeholder="title">
         <button type="submit">Submit</button>
     </form>
+</div>
+
+<%- include("partials/footer") %>
+
