@@ -5,7 +5,7 @@ const express = require("express"),
 escapeStringRegexp = require('escape-string-regexp')
 
 var app = express();
-mongoose.connect("mongodb://localhost:27017/SpotifyClone", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/myJamz", {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
@@ -20,15 +20,22 @@ var songSchema = new mongoose.Schema({
     title: String
 });
 
+//For now, before we figure out how to get binary images from db, just store an image url. 
+//Later, we can create an API which returns a specific release's image. 
+
 //Schema for EPs, Albums, Singles, etc. 
 var releaseSchema = new mongoose.Schema({
-    title: String, 
-    tracks: [songSchema]
+    title: String,
+    titleArtist: String,
+    tracks: [songSchema], 
+    artUrl: String
 });
 
 var Song = mongoose.model("Song", songSchema);
 var Release = mongoose.model("Release", releaseSchema);
 //RESTful routes 
+
+
 
 //Index Redirect
 app.get("/", function(req, res){
@@ -93,10 +100,6 @@ app.get("/songs/:id", function(req, res){
         }
     })
 });
-
-
-
-
 
 //Create
 app.post("/songs", function(req, res){
