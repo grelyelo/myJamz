@@ -14,13 +14,20 @@ app.set("view engine", "ejs");
 const port = 3000,
       host = "127.0.0.1";
 
+//Schema for individual songs
 var songSchema = new mongoose.Schema({
     artist: String,
     title: String
 });
 
-var Song = mongoose.model("Song", songSchema);
+//Schema for EPs, Albums, Singles, etc. 
+var releaseSchema = new mongoose.Schema({
+    title: String, 
+    tracks: [songSchema]
+});
 
+var Song = mongoose.model("Song", songSchema);
+var Release = mongoose.model("Release", releaseSchema);
 //RESTful routes 
 
 //Index Redirect
