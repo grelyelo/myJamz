@@ -45,3 +45,11 @@ hr {
     .sidenav a {font-size: 18px;}
 } 
 
+.wrapper > div {
+    background-color: #eee;
+    padding: 1em;
+}
+
+.wrapper > div:nth-child(odd) {
+    background-color: #ddd;
+}
