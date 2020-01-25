@@ -5,10 +5,12 @@
 //Add event listener to sidebar elements to display appropriate content.
 //onclick, load the page. 
 
-const endpoints = {
+const songEndpoints = {
     artist: "/songs/search/artist/",
     title: "/songs/search/title/"
 }
+
+const releaseEndpoints = {}
 
 function fillSongs(url) {
     $.getJSON(url, function(songs) {
@@ -26,7 +28,8 @@ $( "#home" ).click(function() {
 });
 
 $( "#browse" ).click(function() {
-    alert( "Handler for .click() called on #browse element" );
+    // Get browse elements from /browse endpoint. 
+    // For now, we will get a 
 });
 
 $( "#radio" ).click(function() {
@@ -39,6 +42,6 @@ $("#searchBox").keyup(function(){
     $("#songs").empty();
     let filter = $(this).val();
 
-    fillSongs(endpoints["artist"] + filter);
-    fillSongs(endpoints["title"]  + filter);
+    fillSongs(songEndpoints["artist"] + filter);
+    fillSongs(songEndpoints["title"]  + filter);
 });
