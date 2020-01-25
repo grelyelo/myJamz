@@ -21,20 +21,20 @@ const pictureSchema  = new mongoose.Schema({
 });
 const Picture = mongoose.model("picture", pictureSchema);
 //Schema for individual songs
-const songSchema = new mongoose.Schema({
-    artist: String,
-    title: String, 
-});
-const Song    = mongoose.model("song", songSchema);
-
-//Schema for EPs, Albums, Singles, etc. 
 const releaseSchema = new mongoose.Schema({
-    artist: String,
     title: String,
     tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}],
     releaseArt: [{type: mongoose.Schema.Types.ObjectId, ref: 'picture'}]
 });
 const Release = mongoose.model("release", releaseSchema);
+
+
+const songSchema = new mongoose.Schema({
+    artist: String,
+    title: String,
+    inReleases: [{type: mongoose.Schema.Types.ObjectId, ref: 'release'}]
+});
+const Song    = mongoose.model("song", songSchema);
 
 //RESTful routes 
 
