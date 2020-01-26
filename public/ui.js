@@ -15,13 +15,13 @@ const releaseEndpoints = {}
 function fillSongs(url) {
     $.getJSON(url, function(songs) {
         for(var i = 0; i < songs.length; i++){
-            $("#songs").append('<li>' + songs[i].artist  + " - " + songs[i].title + '</li>')
+            $("#content").append('<li>' + songs[i].artist  + " - " + songs[i].title + '</li>')
         }
     });
 }
 $( "#home" ).click(function() {
     //For now, we shall perform a search for the songs, 
-    $("#songs").empty();
+    $("#content").empty();
     fillSongs("/songs")  
     //parse the json formatted data,
     //and render the elements
@@ -29,7 +29,10 @@ $( "#home" ).click(function() {
 
 $( "#browse" ).click(function() {
     // Get browse elements from /browse endpoint. 
-    // For now, we will get a 
+    // For now, we will simply get the list of albums and display a list. Similar to how we get the 
+    // list of songs. 
+
+
 });
 
 $( "#radio" ).click(function() {
@@ -39,7 +42,7 @@ $( "#radio" ).click(function() {
 //This code is stolen. 
 $("#searchBox").keyup(function(){
     //Todo: check whether the #songs is empty first. 
-    $("#songs").empty();
+    $("#content").empty();
     let filter = $(this).val();
 
     fillSongs(songEndpoints["artist"] + filter);
