@@ -1,3 +1,5 @@
 package-lock.json
 node_modules/*
 mongod
+public/Songs/*
+public/Pictures/*
