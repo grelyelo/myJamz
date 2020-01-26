@@ -120,22 +120,22 @@ app.get("/releases/:id", function(req, res) {
 
 
 //Create
-app.post("/songs", function(req, res){
-    //Yes, I know these variables are redundant, 
-    //but I'm keeping them just in case we want to do validation
-    var a = req.body.artist;
-    var t  = req.body.title;
+// app.post("/songs", function(req, res){
+//     //Yes, I know these variables are redundant, 
+//     //but I'm keeping them just in case we want to do validation
+//     var a = req.body.artist;
+//     var t  = req.body.title;
 
-    var newSong = {artist: a, title: t};
+//     var newSong = {artist: a, title: t};
 
-    Song.create(newSong, function(err, song){
-        if(err) {
-            console.log(err)
-        } else {
-            res.redirect("/songs");
-        }
-    });
-});
+//     Song.create(newSong, function(err, song){
+//         if(err) {
+//             console.log(err)
+//         } else {
+//             res.redirect("/songs");
+//         }
+//     });
+// });
 
 
 //Album Routes
