@@ -1,5 +1,6 @@
 body {
     background-color: #111;
+    font-family: 'Roboto', sans-serif;
 }
 
 #sidenav {
@@ -40,6 +41,21 @@ body {
     max-width: 100%;
     position: absolute;
     bottom: 5%;
+}
+
+#playerControls {
+    display: block;
+    position: fixed;
+    left: 50%;
+    bottom:0;
+    width: 200px;
+    font-size: 50px;
+}
+
+#content {
+    /* border: 5px solid red; */
+    position: relative;
+    height: 100%;
 }
 
 hr {
