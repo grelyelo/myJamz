@@ -2,8 +2,7 @@ const express = require("express"),
    mongoose = require("mongoose"),
  bodyParser = require("body-parser"),
         url = require("url"),
-escapeStringRegexp = require('escape-string-regexp'),
-    gridfs  = require('gridfs-stream');
+escapeStringRegexp = require('escape-string-regexp')
 
 var app = express();
 mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: true});
@@ -22,6 +21,18 @@ const pictureSchema  = new mongoose.Schema({
     picURL: String
 });
 const Picture = mongoose.model("picture", pictureSchema);
+
+//Schema for the playing queue, i.e., the songs which are going to be
+//played in the future.  
+//The /queue/next endpoint redirects to the next playing song. 
+//The /queue/previous endpoint redirects to the previous playing song.  
+const queueSchema = new mongoose.Schema({
+    pos: Number, // Position in queue
+    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}] // Tracks on queue. 
+    //tracks[pos] is currently playing song. 
+});
+const Queue = mongoose.model('queue', queueSchema);
+
 //Schema for individual songs
 const releaseSchema = new mongoose.Schema({
     title: String,
@@ -41,8 +52,7 @@ const Song    = mongoose.model("song", songSchema);
 
 //RESTful routes 
 conn.once('open', function() {
-    let gfs = gridfs(conn.db); // This is the GridFS object we will use to access the file data for each song. 
-
+    let gfs = new mongoose.mongo.GridFSBucket(conn.db);//Using fs.files collection (default) to get the song data. 
     //Index Redirect
     app.get("/", function(req, res){
 
@@ -113,19 +123,53 @@ conn.once('open', function() {
     });
 
     app.get("/songs/:id/play", function(req, res) {
-        // Open a pipe to the file with _id equal to songData of song with ID req.params.id
-        // then pipe the file to the response object (download the song to user's browser). 
-        // For the purposes of this demo, we shall assume we are dealing with an mp3
-        // with content type audio/mpeg, although that is not neccessarily the case.
-        // Eventually, we shall update the Content-Type of the file on GridFS depending on filetype. 
         Song.findById(req.params.id, function(err, song){
             if(song) {
-                res.send(`songData: ${song.songData}`);
+                //Setup stream from the GridFS 
+                // Open a stream to the file with _id equal to songData of song
+                let downloadStream = gfs.openDownloadStream(song.songData)
+
+                res.set({'Content-Type': "audio/mpeg"});//Hard coded for mp3 audio
+                //Pipe file from database to user's browser. 
+                downloadStream
+                    .pipe(res)
+                    .on('error', function() {
+                        //If we get an error while downloading the file, stop 
+                        // streaming and immediately send 500 server error. 
+                        res.status(500).end();
+                    });
             } else {
                 res.send("Song not found");
             }
         })
     });
+
+    app.post('/queue/add/:id', function(req, res){
+        // Add a song with id to queue. 
+        // First, check if we have a queue, if we don't, then add one. 
+        queue.findOneAndUpdate({}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
+            if(err) { 
+                res.status(500).end()
+            } else {
+                res.send(`Successfully added song with id ${req.params.id} to queue`);
+            }
+        })
+    })
+
+
+    app.post('/queue/next', function(req, res) {
+        //Advances queue position. 
+        Queue.findOne({}, function(err, queue){
+            if(queue) {
+                queue.pos += 1;
+                queue.save();
+                res.send(queue.pos);
+            } else { // We have no queue. Can't advance, so do nothing. 
+                res.status(409);
+                res.send("Queue not found, please place item in queue and resubmit");
+            }
+        })
+    })
 
     //Show a release
     app.get("/releases/:id", function(req, res) {
