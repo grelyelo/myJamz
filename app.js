@@ -144,6 +144,27 @@ conn.once('open', function() {
         })
     });
 
+    app.get('/queue', function(req, res){
+        Queue.findOne({}, function(err, queue){
+            if(queue) {
+                res.json(queue.tracks)
+            } else {
+                res.write("No queue.");
+                res.status(404).end();
+            }
+        })
+    })
+
+
+    app.get('/queue/current', function(req, res){
+        Queue.findOne({}, function(err, queue){
+            if(queue) {
+                res.json(queue.tracks[queue.pos]);
+            } else {
+                res.status(404).send("Queue not found");
+            }
+        });
+    })
     app.post('/queue/add/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
@@ -159,13 +180,13 @@ conn.once('open', function() {
 
     app.post('/queue/:dir', function(req, res) {
         //Moves queue position. 
-        Queue.findOne({}, function(err, queue){
+        Queue.findOne({}, 'pos', function(err, queue){
             if(queue) {
                 if(req.params.dir === 'next') {
                     queue.pos += 1;
                 } else if (req.params.dir === 'prev') {
                     queue.pos -= 1;
-                }
+                } 
                 queue.save();
                 res.send(queue.pos);
             } else { // We have no queue. Can't advance, so do nothing. 
