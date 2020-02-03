@@ -27,7 +27,7 @@ const Picture = mongoose.model("picture", pictureSchema);
 //The /queue/next endpoint redirects to the next playing song. 
 //The /queue/previous endpoint redirects to the previous playing song.  
 const queueSchema = new mongoose.Schema({
-    pos: Number, // Position in queue
+    pos: {type: Number, default: 0}, // Position in queue
     tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}] // Tracks on queue. 
     //tracks[pos] is currently playing song. 
 });
