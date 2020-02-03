@@ -2,7 +2,8 @@ const express = require("express"),
    mongoose = require("mongoose"),
  bodyParser = require("body-parser"),
         url = require("url"),
-escapeStringRegexp = require('escape-string-regexp')
+escapeStringRegexp = require('escape-string-regexp'),
+    gridfs  = require('gridfs-stream');
 
 var app = express();
 mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: true});
