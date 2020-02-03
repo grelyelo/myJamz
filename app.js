@@ -147,7 +147,7 @@ conn.once('open', function() {
     app.post('/queue/add/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
-        queue.findOneAndUpdate({}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
+        Queue.findOneAndUpdate({}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
             if(err) { 
                 res.status(500).end()
             } else {
