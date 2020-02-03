@@ -157,11 +157,15 @@ conn.once('open', function() {
     })
 
 
-    app.post('/queue/next', function(req, res) {
-        //Advances queue position. 
+    app.post('/queue/:dir', function(req, res) {
+        //Moves queue position. 
         Queue.findOne({}, function(err, queue){
             if(queue) {
-                queue.pos += 1;
+                if(req.params.dir === 'next') {
+                    queue.pos += 1;
+                } else if (req.params.dir === 'prev') {
+                    queue.pos -= 1;
+                }
                 queue.save();
                 res.send(queue.pos);
             } else { // We have no queue. Can't advance, so do nothing. 
