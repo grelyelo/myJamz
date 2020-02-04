@@ -1,8 +1,10 @@
 <%- include("partials/header") %>
 <!-- Side navigation -->
 <%- include("partials/sidenav") %>
-<div id="main"><%- include("partials/searchBar") %>
-    <ul id="content"></ul>
+<div id="main">
+    <%- include("partials/searchBar") %>
+    <ul class='songResults' id="artist"></ul>
+    <ul class='songResults' id="title"></ul>
     <%- include("partials/playbar") %>
 </div>
 <%- include("partials/footer") %>
