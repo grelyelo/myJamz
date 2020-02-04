@@ -1,7 +1,20 @@
 body {
     background-color: #111;
     font-family: 'Roboto', sans-serif;
+    font-size: 15px;
 }
+
+.songResults {
+    list-style-type: none;
+    padding: 0;
+    font-size: 1.2em;
+}
+
+
+.fas:hover {
+    color: red;
+}
+
 
 #sidenav {
     height: 100%;
@@ -14,14 +27,12 @@ body {
     background-color: #111; /* Black */
     overflow-x: hidden; /* Disable horizontal scroll */
     /* overflow-y: scroll; */
-    padding-top: 20px;
-    padding-left: 10px;
 }
 
 #sidenav a {
     padding: 6px 8px 6px 16px;
     color: grey;
-    font-size: 25px;
+    font-size: 1.5em;
     text-decoration: none;
     text-transform: lowercase;
     display: block;
@@ -32,8 +43,7 @@ body {
 } 
 
 #main {
-    margin-left: 160px;
-    padding: 0 10px;
+    padding-left: 160px;
     color: grey;
 }
 
@@ -52,11 +62,6 @@ body {
     font-size: 50px;
 }
 
-#content {
-    /* border: 5px solid red; */
-    position: relative;
-    height: 100%;
-}
 
 hr {
     margin-left: 16px;
