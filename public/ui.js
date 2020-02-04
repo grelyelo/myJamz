@@ -10,19 +10,34 @@ const songEndpoints = {
     title: "/songs/search/title/"
 }
 
-const releaseEndpoints = {}
+const releaseEndpoints = {};
 
-function fillSongs(url) {
-    $.getJSON(url, function(songs) {
-        for(var i = 0; i < songs.length; i++){
-            $("#content").append('<li>' + songs[i].artist  + " - " + songs[i].title + '</li>')
-        }
+function getSongs(url) {
+    return $.getJSON(url)
+        .then(songs => {
+            return songs;        
+        })
+        .catch(err => { // If we get an error while searching (no response), just show all songs. 
+            return $.getJSON('/songs')
+                .then(songs => {
+                    return songs;
+                });
+        })
+}
+
+
+function fillSongs(songs, selector) {
+    $(selector).empty();
+    songs.forEach(song => {
+        $(selector).append(`<li class='songResult' data-id="${song._id}"><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
     });
 }
+
 $( "#home" ).click(function() {
     //For now, we shall perform a search for the songs, 
-    $("#content").empty();
-    fillSongs("/songs")  
+    getSongs("/songs").then(songs => {
+        fillSongs(songs, "#content");
+    });
     //parse the json formatted data,
     //and render the elements
 });
@@ -42,9 +57,13 @@ $( "#radio" ).click(function() {
 //This code is stolen. 
 $("#searchBox").keyup(function(){
     //Todo: check whether the #songs is empty first. 
-    $("#content").empty();
+    songResults = [];
     let filter = $(this).val();
 
-    fillSongs(songEndpoints["artist"] + filter);
-    fillSongs(songEndpoints["title"]  + filter);
+    getSongs(songEndpoints["title"] + filter).then(titleSongs => {
+        fillSongs(titleSongs, "#title");
+    });
+    getSongs(songEndpoints["artist"] + filter).then(artistSongs => {
+        fillSongs(artistSongs, "#artist");
+    });
 });
