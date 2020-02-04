@@ -196,6 +196,20 @@ conn.once('open', function() {
         })
     })
 
+    app.get('/queue/pos', function(req, res){
+        Queue.findOne({}, 'pos', function(err, queue){
+            if(queue) {
+                res.send(`${queue.pos}`);
+            } else if (err) {
+                res.status(500);
+                res.send("Server Error");
+            } else {
+                res.status(404);
+                res.send("Queue not found");
+            }
+        });
+    })
+
     //Show a release
     app.get("/releases/:id", function(req, res) {
         Release.findById(req.params.id, function(err, foundRelease){
