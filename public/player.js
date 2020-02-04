@@ -63,3 +63,20 @@ $('#togglePlayPause').on('click', function() {
     // If paused, play, otherwise pause.  
     togglePlayback();
 })
+
+async function getQueue() { 
+    return await $.getJSON('/queue');
+}
+
+async function setupQueue() {
+    let pos = await $.get('/queue/pos');
+    let queue = await getQueue();
+    return queue[pos]
+}
+
+
+//Once we have a queue pos from the server, 
+
+setupQueue().then(rval => {
+    console.log(rval);
+});
