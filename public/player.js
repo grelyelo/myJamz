@@ -6,29 +6,54 @@ const paused = 'paused';
 const playing = 'playing';
 var state = paused;
 
-
-var Player = function(song) {
-    this.song = song;
+var Player = function(queue, pos) {
+    queue.length > 0 ? this.queue = queue: this.queue = [];
+    pos >= 0 ? this.pos = pos : this.pos = 0;
 };
 
 Player.prototype = {
     play: function() {
-        var sound;
-        if(this.song.howl){
-            sound = this.song.howl;
-        } else {
-            sound = this.song.howl = new Howl({
-                src: `/songs/${this.song.id}/play`,
-                html5: true,
-            });
+        if(typeof this.pos === 'number' && this.queue){
+            var sound;
+
+            if(this.queue[pos]){
+                sound = this.queue[pos];
+            } else {
+                sound = this.queue[pos] = new Howl({
+                    src: `/songs/${this.song.id}/play`,
+                    html5: true,
+                });
+            }    
+            sound.play();        
+
         }
 
-        sound.play();        
     }, 
     pause: function() {
         var sound = this.song.howl;
         sound.pause();
-    }
+    },
+    next: function() {
+        console.log('song advance');
+        let advanced = false;
+        if(pos+1 < queue.length) {
+            $.post(`/queue/pos/${this.pos+1}`)
+            .then(newPos => {
+                this.pos++;
+                console.log(newPos);
+                advanced = true;
+            })
+            .catch( err => {
+                console.log('error when updating queue');
+            });
+        }
+        if(advanced) {
+            let sound = this.queue[this.pos];
+            sound.play();
+        }
+    },
+
+
 };
 
 var player = new Player({
@@ -64,19 +89,18 @@ $('#togglePlayPause').on('click', function() {
     togglePlayback();
 })
 
+$("#nextSong").on('click', function() {
+    player.next();
+})
+
 async function getQueue() { 
     return await $.getJSON('/queue');
 }
 
-async function setupQueue() {
-    let pos = await $.get('/queue/pos');
-    let queue = await getQueue();
-    return queue[pos]
+async function getPos() {
+    return await $.get('/queue/pos');
 }
 
 
 //Once we have a queue pos from the server, 
 
-setupQueue().then(rval => {
-    console.log(rval);
-});
