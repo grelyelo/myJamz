@@ -18,21 +18,8 @@ Player.prototype = {
             sound = this.song.howl;
         } else {
             sound = this.song.howl = new Howl({
-                src: this.song.filename,
+                src: `/songs/${this.song.id}/play`,
                 html5: true,
-                onplay: function() {
-                    // Switch icon from 
-                    $("#togglePlayPause").removeClass("fa-play");
-                    $("#togglePlayPause").addClass("fa-pause");
-                },
-                onpause: function() {
-                    $("#togglePlayPause").removeClass('fa-pause');
-                    $("#togglePlayPause").addClass('fa-play');
-                },
-                onstop: function() {
-                    $("#togglePlayPause").removeClass('fa-pause');
-                    $("#togglePlayPause").addClass('fa-play');
-                }
             });
         }
 
@@ -45,7 +32,7 @@ Player.prototype = {
 };
 
 var player = new Player({
-    filename: "nowPlaying.mp3",
+    id: "5e3865e91720ea16cfab3c4b",
     howl: null
 });
 
@@ -60,4 +47,19 @@ function togglePlayback(){
     }
 }
 
-$('#togglePlayPause').on('click', togglePlayback)
+
+//Main play button shall only toggle playback of current song. 
+$('#togglePlayPause').on('click', function() {
+
+    // Toggle icon. 
+    if(state === paused) {
+        $(this).removeClass("fa-play-circle");
+        $(this).addClass("fa-pause-circle");
+    } else if (state === playing) {
+        $(this).removeClass("fa-pause-circle");
+        $(this).addClass("fa-play-circle");
+    }
+
+    // If paused, play, otherwise pause.  
+    togglePlayback();
+})
