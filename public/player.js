@@ -138,4 +138,10 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
         player.move(-1);
     })  
 
+    $(".songResults").on('click', 'i', function(event) {
+        event.preventDefault();
+        console.log('triggered');
+        console.log($(this).attr('data-id'));
+    })
+
 })
