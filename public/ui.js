@@ -10,6 +10,10 @@ const songEndpoints = {
     title: "/songs/search/title/"
 }
 
+const artistResults = "#artistResults";
+const titleResults  = "#titleResults";
+const homeResults   = "#homeResults";
+
 const releaseEndpoints = {};
 
 function getSongs(url) {
@@ -29,14 +33,17 @@ function getSongs(url) {
 function fillSongs(songs, selector) {
     $(selector).empty();
     songs.forEach(song => {
-        $(selector).append(`<li class='songResult' data-id="${song._id}"><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
+        $(selector).append(`<li class='songResult'><i data-id="${song._id}" class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
     });
 }
 
 $( "#home" ).click(function() {
     //For now, we shall perform a search for the songs, 
+    $(artistResults).empty();
+    $(titleResults).empty();
+    
     getSongs("/songs").then(songs => {
-        fillSongs(songs, "#content");
+        fillSongs(songs, homeResults);
     });
     //parse the json formatted data,
     //and render the elements
@@ -54,16 +61,21 @@ $( "#radio" ).click(function() {
     alert( "Handler for .click() called on #radio element" );
 });
 
+
+$('#searchBox').click(function() {
+    $(artistResults).empty();
+    $(titleResults).empty();
+    $(homeResults).empty();
+})
 //This code is stolen. 
 $("#searchBox").keyup(function(){
     //Todo: check whether the #songs is empty first. 
-    songResults = [];
     let filter = $(this).val();
 
     getSongs(songEndpoints["title"] + filter).then(titleSongs => {
-        fillSongs(titleSongs, "#title");
+        fillSongs(titleSongs, titleResults);
     });
     getSongs(songEndpoints["artist"] + filter).then(artistSongs => {
-        fillSongs(artistSongs, "#artist");
+        fillSongs(artistSongs, artistResults);
     });
 });
