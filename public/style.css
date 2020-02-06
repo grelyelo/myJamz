@@ -17,6 +17,10 @@ body {
     font-size: 1.2em;
 }
 
+.fas:hover { 
+    color: red;
+}
+
 #sidenav {
     height: 100%;
     width: 160px;
