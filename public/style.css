@@ -3,18 +3,19 @@ body {
     font-family: 'Roboto', sans-serif;
     font-size: 15px;
 }
+.songResult {
+    width: max-content;
+}
 
+.songResult:hover {
+    background-color: #444;
+    color: red;
+}
 .songResults {
     list-style-type: none;
     padding: 0;
     font-size: 1.2em;
 }
-
-
-.fas:hover {
-    color: red;
-}
-
 
 #sidenav {
     height: 100%;
@@ -39,7 +40,8 @@ body {
 }
 
 #sidenav a:hover {
-    color: white;
+    background-color: #444;
+    color: red;
 } 
 
 #main {
