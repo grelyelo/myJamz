@@ -178,18 +178,25 @@ conn.once('open', function() {
     })
 
 
-    app.post('/queue/:dir', function(req, res) {
+    app.post('/queue/pos/:pos', function(req, res) {
         //Moves queue position. 
-        Queue.findOne({}, 'pos', function(err, queue){
+        Queue.findOne({}, function(err, queue){
             if(queue) {
-                if(req.params.dir === 'next') {
-                    queue.pos += 1;
-                } else if (req.params.dir === 'prev') {
-                    queue.pos -= 1;
-                } 
-                queue.save();
-                res.send(queue.pos);
-            } else { // We have no queue. Can't advance, so do nothing. 
+                if(req.params.pos < queue.tracks.length){
+                    queue.pos = req.params.pos; 
+                    queue.save()
+                        .then(q => {
+                            res.send(`${q.pos}`);
+                        })
+                        .catch(err => {
+                            res.status(500);
+                            res.send('Server Error');
+                        })
+
+                } else {
+                    res.send(`${queue.pos}`);
+                }
+            } else { // We have no queue. Can't set pos, so do nothing. 
                 res.status(409);
                 res.send("Queue not found, please place item in queue and resubmit");
             }
