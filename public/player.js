@@ -4,103 +4,138 @@
 
 const paused = 'paused';
 const playing = 'playing';
-var state = paused;
 
-var Player = function(queue, pos) {
+var Player = function(queue, pos, btn) {
     queue.length > 0 ? this.queue = queue: this.queue = [];
     pos >= 0 ? this.pos = pos : this.pos = 0;
+    this.state = paused;
+    this.btn   = btn;
 };
 
 Player.prototype = {
     play: function() {
         if(typeof this.pos === 'number' && this.queue){
             var sound;
-
-            if(this.queue[pos]){
-                sound = this.queue[pos];
+            if(this.queue[this.pos].howl){
+                sound = this.queue[this.pos].howl;
             } else {
-                sound = this.queue[pos] = new Howl({
-                    src: `/songs/${this.song.id}/play`,
+                sound = this.queue[this.pos].howl = new Howl({
+                    src: `/songs/${this.queue[this.pos].id}/play`,
                     html5: true,
                 });
-            }    
-            sound.play();        
+            }
 
+            //Change Icon to playing
+            $(this.btn).removeClass("fa-play-circle");
+            $(this.btn).addClass("fa-pause-circle");
+
+            this.state = playing;
+            sound.play(); 
         }
 
     }, 
     pause: function() {
-        var sound = this.song.howl;
+        var sound = this.queue[this.pos].howl;
+        this.state = paused;
+
+        //Change icon to paused
+        $(this.btn).removeClass("fa-pause-circle");
+        $(this.btn).addClass("fa-play-circle");
         sound.pause();
     },
-    next: function() {
+    stop: function() { 
+        var sound = this.queue[this.pos].howl;
+        this.state = paused;
+
+        //Change icon to paused
+        $(this.btn).removeClass("fa-pause-circle");
+        $(this.btn).addClass("fa-play-circle");
+        
+        sound.stop();
+    },
+    toggle: function() {
+        if(this.state === paused) {
+            this.play();
+        } else if (this.state === playing) {
+            this.pause();
+        }
+    },
+    move: function(n) {
         console.log('song advance');
-        let advanced = false;
-        if(pos+1 < queue.length) {
-            $.post(`/queue/pos/${this.pos+1}`)
-            .then(newPos => {
-                this.pos++;
-                console.log(newPos);
-                advanced = true;
+        if(this.pos+n< this.queue.length) {
+            $.post(`/queue/pos/${this.pos+n}`)
+            .then(() => {
+                this.stop();//Stops current song
+                this.pos += n;//Advances queue on client
+                this.play();//Plays next song. 
             })
             .catch( err => {
                 console.log('error when updating queue');
             });
         }
-        if(advanced) {
-            let sound = this.queue[this.pos];
-            sound.play();
-        }
     },
+    addToQueue: function(song) {
+        this.queue.push(song);
+        $.post(`/queue/add/${song.id}`)
+            .then(res => {
+                console.log(`added song with id ${song.id} to queue`);
+            })
+    }
 
 
 };
 
-var player = new Player({
-    id: "5e3865e91720ea16cfab3c4b",
-    howl: null
-});
 
 
-function togglePlayback(){
-    if(state === paused) {
-        state = playing;
-        player.play();
-    } else if (state === playing) {
-        state = paused;
-        player.pause();
-    }
-}
-
-
-//Main play button shall only toggle playback of current song. 
-$('#togglePlayPause').on('click', function() {
-
-    // Toggle icon. 
-    if(state === paused) {
-        $(this).removeClass("fa-play-circle");
-        $(this).addClass("fa-pause-circle");
-    } else if (state === playing) {
-        $(this).removeClass("fa-pause-circle");
-        $(this).addClass("fa-play-circle");
-    }
-
-    // If paused, play, otherwise pause.  
-    togglePlayback();
-})
-
-$("#nextSong").on('click', function() {
-    player.next();
-})
 
 async function getQueue() { 
     return await $.getJSON('/queue');
 }
 
 async function getPos() {
-    return await $.get('/queue/pos');
+    let pos =  await $.get('/queue/pos');
+    return Number(pos);
+}
+
+async function setupPlayer() {
+    try {
+        let queue = await getQueue();
+        let pos   = await getPos();
+
+        let songs = Object.keys(queue).map(key => {
+            return { 
+                id: queue[key],
+                howl: null
+            };
+        })
+
+        let player =  new Player(songs, pos, "#togglePlayPause");
+        return player;
+    } catch(err) {
+        console.log("Got error in setupPlayer");
+        throw new Error("setupPlayer failed");
+    }
 }
 
 
-//Once we have a queue pos from the server, 
+// For now, I'm just going to print out the player details -- I'll do the actual stuff later. 
 
+var mainPlayer = setupPlayer()
+
+mainPlayer.then(player => { // Bind the listeners once we have loaded the player queue and details. 
+    
+
+    //Main play button shall only toggle playback of current song. 
+    $('#togglePlayPause').on('click', function() {
+        player.toggle();
+    })
+
+    $("#nextSong").on('click', function() {
+        player.move(1);
+    })  
+
+    $("#prevSong").on('click', function() {
+        player.move(-1);
+    })  
+
+})
