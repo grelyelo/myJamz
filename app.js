@@ -9,6 +9,7 @@ mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: tr
 var conn = mongoose.connection;
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
@@ -165,6 +166,7 @@ conn.once('open', function() {
             }
         });
     })
+
     app.post('/queue/add/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
@@ -177,6 +179,22 @@ conn.once('open', function() {
         })
     })
 
+    app.post('/queue/replace', function(req, res){
+        //Takes json payload and uses it to replace the existing queue with contents of payload. 
+        // For now, just print out, and send response echoing request. 
+        Queue.findOne({}, (err, queue) => {
+            if(queue) {
+                let newTracks = Array.from(req.body, x => mongoose.Types.ObjectId(x));
+                queue.tracks = newTracks;
+                queue.pos    = 0;
+                queue.save();
+                res.redirect('/queue');
+            } else {
+                res.status(500);
+                res.send("Server error");
+            }
+        })
+    })
 
     app.post('/queue/pos/:pos', function(req, res) {
         //Moves queue position. 
