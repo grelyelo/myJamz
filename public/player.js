@@ -44,14 +44,12 @@ Player.prototype = {
         sound.pause();
     },
     stop: function() { 
-        var sound = this.queue[this.pos].howl;
         this.state = paused;
 
         //Change icon to paused
         $(this.btn).removeClass("fa-pause-circle");
         $(this.btn).addClass("fa-play-circle");
-        
-        sound.stop();
+        Howler.unload();
     },
     toggle: function() {
         if(this.state === paused) {
@@ -80,6 +78,21 @@ Player.prototype = {
             .then(res => {
                 console.log(`added song with id ${song.id} to queue`);
             })
+    }, 
+    replaceQueue: function(clientQueue) {
+        this.stop();
+        this.queue = clientQueue;
+        this.pos   = 0;
+        let serverQueue = JSON.stringify(Array.from(clientQueue, x => `${x.id}`));
+
+        $.ajax('/queue/replace', {
+            type: 'POST',
+            contentType: 'application/json',
+            data: serverQueue,
+            processData: false
+        });
+        console.log(this.queue)
+        this.play();
     }
 
 
@@ -140,8 +153,8 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
 
     $(".songResults").on('click', 'i', function(event) {
         event.preventDefault();
-        console.log('triggered');
-        console.log($(this).attr('data-id'));
+        let id = $(this).attr('data-id');
+        player.replaceQueue([{id: id, howl: null}]);
     })
 
 })
