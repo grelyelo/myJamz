@@ -1,18 +1,35 @@
-const express = require("express"),
-   mongoose = require("mongoose"),
- bodyParser = require("body-parser"),
-        url = require("url"),
+const express      = require("express"),
+mongoose           = require("mongoose"),
+redis              = require('redis'),
+bodyParser         = require("body-parser"),
+url                = require("url"),
+session            = require('express-session'),
 escapeStringRegexp = require('escape-string-regexp')
 
 var app = express();
+let RedisStore = require('connect-redis')(session)
+
+let redisClient = redis.createClient()
+//Setup Mongodb connection
 mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: true});
 var conn = mongoose.connection;
 
+//middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static("public"));
+app.use(session({
+    store: new RedisStore({ client: redisClient }),
+    secret: 'secret-key',
+    resave: false, 
+    saveUninitialized: true,
+    name: 'session'
+}));
+
+//Config
 app.set("view engine", "ejs");
 
+//for connection
 const port = 3000,
       host = "127.0.0.1";
 
@@ -56,7 +73,6 @@ conn.once('open', function() {
     let gfs = new mongoose.mongo.GridFSBucket(conn.db);//Using fs.files collection (default) to get the song data. 
     //Index Redirect
     app.get("/", function(req, res){
-
         res.render("main");
     });
 
