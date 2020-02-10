@@ -45,6 +45,7 @@ const Picture = mongoose.model("picture", pictureSchema);
 //The /queue/next endpoint redirects to the next playing song. 
 //The /queue/previous endpoint redirects to the previous playing song.  
 const queueSchema = new mongoose.Schema({
+    sessionId: String,
     pos: {type: Number, default: 0}, // Position in queue
     tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}] // Tracks on queue. 
     //tracks[pos] is currently playing song. 
@@ -162,19 +163,19 @@ conn.once('open', function() {
     });
 
     app.get('/queue', function(req, res){
-        Queue.findOne({}, function(err, queue){
+        Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
                 res.json(queue.tracks)
             } else {
-                res.write("No queue.");
-                res.status(404).end();
+                res.status(404);
+                res.send("No queue.");
             }
         })
     })
 
 
     app.get('/queue/current', function(req, res){
-        Queue.findOne({}, function(err, queue){
+        Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
                 res.json(queue.tracks[queue.pos]);
             } else {
@@ -186,7 +187,8 @@ conn.once('open', function() {
     app.post('/queue/add/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
-        Queue.findOneAndUpdate({}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
+        // Use only the queue for current session. 
+        Queue.findOneAndUpdate({sessionId: req.session.id}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
             if(err) { 
                 res.status(500).end()
             } else {
@@ -198,7 +200,7 @@ conn.once('open', function() {
     app.post('/queue/replace', function(req, res){
         //Takes json payload and uses it to replace the existing queue with contents of payload. 
         // For now, just print out, and send response echoing request. 
-        Queue.findOne({}, (err, queue) => {
+        Queue.findOne({sessionId: req.session.id}, (err, queue) => {
             if(queue) {
                 let newTracks = Array.from(req.body, x => mongoose.Types.ObjectId(x));
                 queue.tracks = newTracks;
@@ -214,7 +216,7 @@ conn.once('open', function() {
 
     app.post('/queue/pos/:pos', function(req, res) {
         //Moves queue position. 
-        Queue.findOne({}, function(err, queue){
+        Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
                 if(req.params.pos < queue.tracks.length){
                     queue.pos = req.params.pos; 
@@ -238,7 +240,7 @@ conn.once('open', function() {
     })
 
     app.get('/queue/pos', function(req, res){
-        Queue.findOne({}, 'pos', function(err, queue){
+        Queue.findOne({sessionId: req.session.id}, 'pos', function(err, queue){
             if(queue) {
                 res.send(`${queue.pos}`);
             } else if (err) {
