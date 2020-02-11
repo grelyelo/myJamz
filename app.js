@@ -12,6 +12,7 @@ let RedisStore = require('connect-redis')(session)
 let redisClient = redis.createClient()
 //Setup Mongodb connection
 mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: true});
+mongoose.set('useCreateIndex', true);
 var conn = mongoose.connection;
 
 //middleware
@@ -23,7 +24,8 @@ app.use(session({
     secret: 'secret-key',
     resave: false, 
     saveUninitialized: true,
-    name: 'session'
+    name: 'session',
+    cookie: {maxAge: 1000 * 60 * 1} // Expires after 1 minute. 
 }));
 
 //Config
@@ -47,8 +49,8 @@ const Picture = mongoose.model("picture", pictureSchema);
 const queueSchema = new mongoose.Schema({
     sessionId: String,
     pos: {type: Number, default: 0}, // Position in queue
-    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}] // Tracks on queue. 
-    //tracks[pos] is currently playing song. 
+    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}], // Tracks on queue. 
+    createdAt: {type: Date, default: Date.now}
 });
 const Queue = mongoose.model('queue', queueSchema);
 
@@ -167,8 +169,7 @@ conn.once('open', function() {
             if(queue) {
                 res.json(queue.tracks)
             } else {
-                res.status(404);
-                res.send("No queue.");
+                res.json([]);
             }
         })
     })
