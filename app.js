@@ -15,6 +15,7 @@ mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: tr
 mongoose.set('useCreateIndex', true);
 var conn = mongoose.connection;
 
+const SESSION_LENGTH = 60 
 //middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -25,7 +26,7 @@ app.use(session({
     resave: false, 
     saveUninitialized: true,
     name: 'session',
-    cookie: {maxAge: 1000 * 60 * 1} // Expires after 1 minute. 
+    cookie: {maxAge: 1000 * SESSION_LENGTH} // Expires after 1 minute. 
 }));
 
 //Config
@@ -50,7 +51,7 @@ const queueSchema = new mongoose.Schema({
     sessionId: String,
     pos: {type: Number, default: 0}, // Position in queue
     tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}], // Tracks on queue. 
-    createdAt: {type: Date, default: Date.now}
+    createdAt: { type: Date, expires: SESSION_LENGTH, default: Date.now }
 });
 const Queue = mongoose.model('queue', queueSchema);
 
