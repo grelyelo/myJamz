@@ -190,11 +190,18 @@ conn.once('open', function() {
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
         // Use only the queue for current session. 
-        Queue.findOneAndUpdate({sessionId: req.session.id}, {$push: {tracks: req.params.id}}, {upsert: true, new: true}, (err, queue) => {
-            if(err) { 
-                res.status(500).end()
+        Queue.findOne({sessionId: req.session.id}, (err, queue) => {
+            if(queue) {
+                queue.tracks.push(mongoose.Types.ObjectId(req.params.id));
+                queue.save();
+                res.redirect("/queue");
             } else {
-                res.send(`Successfully added song with id ${req.params.id} to queue`);
+                queue = new Queue({
+                    tracks: [mongoose.Types.ObjectId(req.params.id)],
+                    sessionId: req.session.id
+                });
+                queue.save();
+                res.redirect("/queue");
             }
         })
     })
