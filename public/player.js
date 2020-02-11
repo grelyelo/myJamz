@@ -102,7 +102,8 @@ Player.prototype = {
 
 
 async function getQueue() { 
-    return await $.getJSON('/queue');
+    let queue = $.getJSON('/queue');
+    return queue;
 }
 
 async function getPos() {
@@ -111,27 +112,26 @@ async function getPos() {
 }
 
 async function setupPlayer() {
+    let queue, pos;
     try {
-        let queue = await getQueue();
-        let pos   = await getPos();
+        queue = await getQueue();
+        pos   = await getPos();
 
-        let songs = Object.keys(queue).map(key => {
-            return { 
-                id: queue[key],
-                howl: null
-            };
-        })
-
-        let player =  new Player(songs, pos, "#togglePlayPause");
-        return player;
     } catch(err) {
-        console.log("Got error in setupPlayer");
-        throw new Error("setupPlayer failed");
+        queue = {};
+        pos   = 0;
     }
+    let songs = Object.keys(queue).map(key => {
+        return { 
+            id: queue[key],
+            howl: null
+        };
+    })
+
+    let player =  new Player(songs, pos, "#togglePlayPause");
+    return player;
+
 }
-
-
-// For now, I'm just going to print out the player details -- I'll do the actual stuff later. 
 
 var mainPlayer = setupPlayer()
 
@@ -153,7 +153,7 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
 
     $(".songResults").on('click', 'i', function(event) {
         event.preventDefault();
-        let id = $(this).attr('data-id');
+        let id = $(this).parent('.songResult').attr('data-id');
         player.replaceQueue([{id: id, howl: null}]);
     })
 
