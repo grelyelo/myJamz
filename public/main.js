@@ -17,51 +17,66 @@ const homeResults   = "#homeResults";
 const contextMenu   = $('.custom-cm');
 const contextMenuItem = $('.cm-item');
 const releaseEndpoints = {};
+const togglePlayPause= $('#togglePlayPause');
+const nextSong       = $('#nextSong');
+const prevSong       = $('#prevSong');
 
-var Player = function(queue, pos, btn) {
+
+var Player = function(queue, pos) {
     queue.length > 0 ? this.queue = queue: this.queue = [];
     pos >= 0 ? this.pos = pos : this.pos = 0;
     this.state = paused;
-    this.btn   = btn;
 };
 
 Player.prototype = {
     play: function() {
         if(typeof this.pos === 'number' && this.queue){
-            var sound;
+            let sound;
+            let self = this;
             if(this.queue[this.pos].howl){
                 sound = this.queue[this.pos].howl;
             } else {
                 sound = this.queue[this.pos].howl = new Howl({
                     src: `/songs/${this.queue[this.pos].id}/play`,
                     html5: true,
+                    onplay: function() {
+                        togglePlayPause.removeClass("fa-play-circle");
+                        togglePlayPause.addClass("fa-pause-circle");
+                    }, 
+                    onstop: function() {
+                        togglePlayPause.removeClass("fa-pause-circle");
+                        togglePlayPause.addClass('fa-play-circle');
+                    }, 
+                    onpause: function() {
+                        togglePlayPause.removeClass("fa-pause-circle");
+                        togglePlayPause.addClass('fa-play-circle');
+                    }, 
+                    onend: function() {
+                        togglePlayPause.removeClass("fa-pause-circle");
+                        togglePlayPause.addClass('fa-play-circle');
+                        self.move(1);
+                    }
+
                 });
             }
-
-            //Change Icon to playing
-            $(this.btn).removeClass("fa-play-circle");
-            $(this.btn).addClass("fa-pause-circle");
-
             this.state = playing;
             sound.play(); 
         }
 
     }, 
     pause: function() {
-        var sound = this.queue[this.pos].howl;
+        let sound = this.queue[this.pos].howl;
+        if(sound != null) {
+            sound.pause();
+        }
         this.state = paused;
-
-        //Change icon to paused
-        $(this.btn).removeClass("fa-pause-circle");
-        $(this.btn).addClass("fa-play-circle");
-        sound.pause();
     },
     stop: function() { 
+        if(this.queue.length > 0) { // If we have a queue, stop current song. 
+            let sound = this.queue[this.pos].howl;
+            sound.stop();    
+        }
         this.state = paused;
-
-        //Change icon to paused
-        $(this.btn).removeClass("fa-pause-circle");
-        $(this.btn).addClass("fa-play-circle");
         Howler.unload();
     },
     toggle: function() {
