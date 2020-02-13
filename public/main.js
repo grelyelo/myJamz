@@ -251,18 +251,20 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
     
 
     //Main play button shall only toggle playback of current song. 
-    $('#togglePlayPause').on('click', function() {
+    togglePlayPause.on('click', function() {
         player.toggle();
     })
 
-    $("#nextSong").on('click', function() {
+    nextSong.on('click', function() {
         player.move(1);
     })  
 
-    $("#prevSong").on('click', function() {
+    prevSong.on('click', function() {
         player.move(-1);
     })  
 
+    // When we click on play button for a song in the UI
+    // replace the queue for the player and play the song. 
     $(".songResults").on('click', 'i', function(event) {
         event.preventDefault();
         let id = $(this).parent('.songResult').attr('data-id');
