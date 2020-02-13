@@ -87,7 +87,6 @@ Player.prototype = {
         }
     },
     move: function(n) {
-        console.log('song advance');
         if(this.pos+n< this.queue.length) {
             $.post(`/queue/pos/${this.pos+n}`)
             .then(() => {
@@ -103,9 +102,6 @@ Player.prototype = {
     addToQueue: function(song) {
         this.queue.push(song);
         $.post(`/queue/add/${song.id}`)
-            .then(res => {
-                console.log(`added song with id ${song.id} to queue`);
-            })
     }, 
     replaceQueue: function(clientQueue) {
         this.stop();
@@ -119,11 +115,8 @@ Player.prototype = {
             data: serverQueue,
             processData: false
         });
-        console.log(this.queue)
         this.play();
     }
-
-
 };
 
 
