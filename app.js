@@ -214,11 +214,23 @@ conn.once('open', function() {
                 let newTracks = Array.from(req.body, x => mongoose.Types.ObjectId(x));
                 queue.tracks = newTracks;
                 queue.pos    = 0;
-                queue.save();
+                queue.save().then(() => {
+                    console.log('saved new queue');
+                });
                 res.redirect('/queue');
             } else {
-                res.status(500);
-                res.send("Server error");
+                let newTracks = Array.from(req.body, x => mongoose.Types.ObjectId(x));
+                
+                let queue = new Queue({
+                    tracks: newTracks, 
+                    pos: 0,
+                    sessionId: req.session.id
+                })
+
+                queue.save().then(() => {
+                    console.log('saved new queue');
+                }); 
+                res.redirect('/queue');
             }
         })
     })
