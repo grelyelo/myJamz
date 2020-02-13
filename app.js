@@ -15,7 +15,7 @@ mongoose.connect("mongodb://localhost:27017/myJamzTesting", {useNewUrlParser: tr
 mongoose.set('useCreateIndex', true);
 var conn = mongoose.connection;
 
-const SESSION_LENGTH = 60 
+const SESSION_LENGTH = 60 * 60 * 24; // Session lasts 24 hours. 
 //middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
