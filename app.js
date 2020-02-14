@@ -274,6 +274,30 @@ conn.once('open', function() {
         });
     })
 
+
+    app.get("/releases/search/:by/:term", function(req, res){
+        var term = req.params.term;
+        //Use regular expression to support partial match
+        var termRegex = new RegExp(escapeStringRegexp(term), "i");
+        var by    = req.params.by;
+        var query; 
+
+        if(by === 'title') {
+            query = {title: termRegex}
+        } else {
+            query = {};
+        }
+        
+        //Find by search criteria. 
+        
+        Release.find(query, function(err, releases) {
+            if(releases) {
+                res.json(releases);
+            } else {
+                res.json([]);
+            }
+        })   
+    });
     //Show a release
     app.get("/releases/:id", function(req, res) {
         Release.findById(req.params.id, function(err, foundRelease){
