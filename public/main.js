@@ -172,8 +172,7 @@ async function setupPlayer() {
 
 //Add event listener to sidebar elements to display appropriate content.
 //onclick, load the page. 
-function getAllSongs() { 
-    let url = '/songs';
+function getAll(url) { 
     return $.getJSON(url)
     .then(songs => {
         return songs;        
