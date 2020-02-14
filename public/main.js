@@ -11,12 +11,24 @@ const songEndpoints = {
     title: "/songs/search/title/"
 }
 
-const artistResults = "#artistResults";
-const titleResults  = "#titleResults";
-const homeResults   = "#homeResults";
+// Search box
+const searchBox     = $("#searchBox")
+// Sidebar links
+const homeLink      = $("#home-link");
+const browseLink    = $("#browse-link");
+const radioLink     = $("#radio-link");
+
+//Page div containers
+const artistResults = $("#artistResults");
+const titleResults  = $("#titleResults");
+const homeResults   = $("#homeResults");
+const anyResults    = $(".results")
+
+//Context Menu
 const contextMenu   = $('.custom-cm');
 const contextMenuItem = $('.cm-item');
-const releaseEndpoints = {};
+
+//Play Controls
 const togglePlayPause= $('#togglePlayPause');
 const nextSong       = $('#nextSong');
 const prevSong       = $('#prevSong');
