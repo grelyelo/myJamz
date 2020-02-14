@@ -1,0 +1,17 @@
+<%- include("partials/header") %>
+<!-- Context Menu -->
+<%- include("partials/contextmenu") %>
+<!-- Side navigation -->
+<%- include("partials/sidenav") %>
+<div id="main">
+    <%- include("partials/searchBar") %>
+    <ul class='results artistResults' id="artistResults"></ul>
+    <ul class='results titleResults' id="titleResults"></ul>
+    <div class="browse-grid">
+        <% releases.forEach(function(release) { %>
+            <div class="browse-grid-item"><%= release.title %></div>
+        <% }) %>
+    </div>
+    <%- include("partials/playbar") %>
+</div>
+<%- include("partials/footer") %>
