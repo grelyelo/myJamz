@@ -42,6 +42,17 @@ body {
     background-color: #f8f8f8;
 }
 
+.browse-grid {
+    font-size: 1.2em;
+    padding: 0; 
+    width: 90%; 
+    margin: 0 auto; 
+    display: grid; 
+    grid-gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: 100px;
+}
+
 #sidenav {
     height: 100%;
     width: 160px;
