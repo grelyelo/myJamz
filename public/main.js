@@ -104,7 +104,9 @@ Player.prototype = {
         $.post(`/queue/add/${song.id}`)
     }, 
     replaceQueue: function(clientQueue) {
-        this.stop();
+        if(this.queue.length > 0) {
+            this.stop();
+        }
         this.queue = clientQueue;
         this.pos   = 0;
         let serverQueue = JSON.stringify(Array.from(clientQueue, x => `${x.id}`));
