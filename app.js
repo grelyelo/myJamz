@@ -80,6 +80,27 @@ conn.once('open', function() {
         res.render("main");
     });
 
+    app.get("/home", function(req, res){
+        Song.find({}, function(err, songs){
+            if(songs) {
+                res.render('home', {songs: songs});
+            } else {
+                res.render('home', {songs: []})
+            }
+        })
+
+    })
+
+    app.get("/browse", function(req, res) {
+        Release.find({}, function(err, releases){
+            if(releases) {
+                res.render('browse', {releases: releases});
+            } else {
+                res.render('browse', {releases: []})
+            }
+        })
+    });
+
     //Index
     app.get("/songs", function(req, res) {
         Song.find({}, function(err, songs) {
