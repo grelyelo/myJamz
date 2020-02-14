@@ -84,10 +84,6 @@ Player.prototype = {
         this.state = paused;
     },
     stop: function() { 
-        if(this.queue.length > 0) { // If we have a queue, stop current song. 
-            let sound = this.queue[this.pos].howl;
-            sound.stop();    
-        }
         this.state = paused;
         Howler.unload();
     },
