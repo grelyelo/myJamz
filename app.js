@@ -124,10 +124,10 @@ conn.once('open', function() {
         //Find by search criteria. 
         
         Song.find(query, function(err, songs) {
-            if(err) {
-                console.log(err);
+            if(songs) {
+                res.json(songs);
             } else {
-                res.json(songs)
+                res.json([]);
             }
         })   
     });
