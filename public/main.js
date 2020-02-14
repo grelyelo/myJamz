@@ -228,8 +228,6 @@ $(window).on('click', function(event) {
     contextMenu.hide();
 })
 
-
-
 var mainPlayer = setupPlayer();
 
 mainPlayer.then(player => { // Bind the listeners once we have loaded the player queue and details. 
