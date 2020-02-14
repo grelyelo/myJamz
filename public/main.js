@@ -188,45 +188,22 @@ function getSearchResults(rootEndpoint, search) {
 }
 
 
-function fillSongs(songs, selector) {
-    $(selector).empty();
+function fillSongs(songs, element) {
+    element.empty();
     songs.forEach(song => {
-        $(selector).append(`<li data-id="${song._id}" class='songResult'><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
+        element.append(`<li data-id="${song._id}" class='songResult'><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
     });
 }
 
-$( "#home" ).click(function() {
-    //For now, we shall perform a search for the songs, 
-    $(artistResults).empty();
-    $(titleResults).empty();
-    
-    getAllSongs().then(songs => {
-        fillSongs(songs, homeResults);
-    });
-    //parse the json formatted data,
-    //and render the elements
-});
 
-$( "#browse" ).click(function() {
-    // Get browse elements from /browse endpoint. 
-    // For now, we will simply get the list of albums and display a list. Similar to how we get the 
-    // list of songs. 
-
-
-});
-
-$( "#radio" ).click(function() {
-    alert( "Handler for .click() called on #radio element" );
-});
-
-
-$('#searchBox').click(function() {
-    $(artistResults).empty();
-    $(titleResults).empty();
-    $(homeResults).empty();
+searchBox.click(function() {
+    artistResults.empty();
+    titleResults.empty();
+    homeResults.empty();
 })
 //This code is stolen. 
-$("#searchBox").keyup(function(){
+searchBox.keyup(function(){
+    console.log("searching")
     //Todo: check whether the #songs is empty first. 
     let filter = $(this).val();
 
@@ -238,9 +215,7 @@ $("#searchBox").keyup(function(){
     });
 });
 
-$('.songResults').on("contextmenu", '.songResult', function(event) {
-    // When we right-click anywhere on the page, 
-    // show the context menu. 
+anyResults.on("contextmenu", '.songResult', function(event) {
     event.preventDefault();
     contextMenuItem.attr('data-id', $(this).attr('data-id'));
     contextMenu.css('top', event.pageY);
@@ -275,8 +250,9 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
 
     // When we click on play button for a song in the UI
     // replace the queue for the player and play the song. 
-    $(".songResults").on('click', 'i', function(event) {
+    anyResults.on('click', 'i', function(event) {
         event.preventDefault();
+        console.log(player.queue);
         let id = $(this).parent('.songResult').attr('data-id');
         player.replaceQueue([{id: id, howl: null}]);
     })
