@@ -164,18 +164,19 @@ async function setupPlayer() {
 
 //Add event listener to sidebar elements to display appropriate content.
 //onclick, load the page. 
-
-
-function getSongs(url) {
+function getAllSongs() { 
+    let url = '/songs';
     return $.getJSON(url)
-        .then(songs => {
-            return songs;        
-        })
-        .catch(err => { // If we get an error while searching (no response), just show all songs. 
-            return $.getJSON('/songs')
-                .then(songs => {
-                    return songs;
-                });
+    .then(songs => {
+        return songs;        
+    })
+}
+
+function getSearchResults(rootEndpoint, search) {
+    let url = rootEndpoint + search;
+    return $.getJSON(url)
+        .then(results => {
+            return results;        
         })
 }
 
@@ -192,7 +193,7 @@ $( "#home" ).click(function() {
     $(artistResults).empty();
     $(titleResults).empty();
     
-    getSongs("/songs").then(songs => {
+    getAllSongs().then(songs => {
         fillSongs(songs, homeResults);
     });
     //parse the json formatted data,
@@ -222,10 +223,10 @@ $("#searchBox").keyup(function(){
     //Todo: check whether the #songs is empty first. 
     let filter = $(this).val();
 
-    getSongs(songEndpoints["title"] + filter).then(titleSongs => {
+    getSearchResults("/songs/search", "/title/"+filter).then(titleSongs => {
         fillSongs(titleSongs, titleResults);
     });
-    getSongs(songEndpoints["artist"] + filter).then(artistSongs => {
+    getSearchResults("/songs/search", "/artist/"+filter).then(artistSongs => {
         fillSongs(artistSongs, artistResults);
     });
 });
