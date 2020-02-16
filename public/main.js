@@ -11,6 +11,7 @@ const songEndpoints = {
     title: "/songs/search/title/"
 }
 
+const API_PREFIX = '/api/v1'; 
 // Search box
 const searchBox     = $("#searchBox")
 // Sidebar links
@@ -96,7 +97,7 @@ Player.prototype = {
     },
     move: function(n) {
         if(this.pos+n< this.queue.length) {
-            $.post(`/queue/pos/${this.pos+n}`)
+            $.post(API_PREFIX + `/queue/pos/${this.pos+n}`)
             .then(() => {
                 this.stop();//Stops current song
                 this.pos += n;//Advances queue on client
@@ -109,7 +110,7 @@ Player.prototype = {
     },
     addToQueue: function(song) {
         this.queue.push(song);
-        $.post(`/queue/add/${song.id}`)
+        $.post(API_PREFIX + `/queue/add/${song.id}`)
     }, 
     replaceQueue: function(clientQueue) {
         if(this.queue.length > 0) {
@@ -119,7 +120,7 @@ Player.prototype = {
         this.pos   = 0;
         let serverQueue = JSON.stringify(Array.from(clientQueue, x => `${x.id}`));
 
-        $.ajax('/queue/replace', {
+        $.ajax(API_PREFIX + '/queue/replace', {
             type: 'POST',
             contentType: 'application/json',
             data: serverQueue,
@@ -133,12 +134,12 @@ Player.prototype = {
 
 
 async function getQueue() { 
-    let queue = $.getJSON('/queue');
+    let queue = $.getJSON(API_PREFIX + '/queue');
     return queue;
 }
 
 async function getPos() {
-    let pos =  await $.get('/queue/pos');
+    let pos =  await $.get(API_PREFIX + '/queue/pos');
     return Number(pos);
 }
 
@@ -207,10 +208,10 @@ searchBox.keyup(function(){
     //Todo: check whether the #songs is empty first. 
     let filter = $(this).val();
 
-    getSearchResults("/songs/search", "/title/"+filter).then(titleSongs => {
+    getSearchResults(API_PREFIX + "/songs/search", "/title/"+filter).then(titleSongs => {
         fillSongs(titleSongs, titleResults);
     });
-    getSearchResults("/songs/search", "/artist/"+filter).then(artistSongs => {
+    getSearchResults(API_PREFIX + "/songs/search", "/artist/"+filter).then(artistSongs => {
         fillSongs(artistSongs, artistResults);
     });
 });
