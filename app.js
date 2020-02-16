@@ -102,7 +102,7 @@ conn.once('open', function() {
     });
 
     //Index
-    app.get("/songs", function(req, res) {
+    app.get("/api/v1/songs", function(req, res) {
         Song.find({}, function(err, songs) {
             if(err) {
                 console.log(err);
@@ -113,7 +113,7 @@ conn.once('open', function() {
         })
     });
 
-    app.get("/releases", function(req, res){
+    app.get("/api/v1/releases", function(req, res){
         Release.find({}, function(err, releases){
             if(!err) {
                 res.json(releases);
@@ -130,7 +130,7 @@ conn.once('open', function() {
 
 
     //Search for songs based on some criteria
-    app.get("/songs/search/:by/:term", function(req, res){
+    app.get("/api/v1/songs/search/:by/:term", function(req, res){
         var term = req.params.term;
         //Use regular expression to support partial mapping
         var termRegex = new RegExp(escapeStringRegexp(term), "i");
@@ -154,7 +154,7 @@ conn.once('open', function() {
     });
 
     //Show songs
-    app.get("/songs/:id", function(req, res){
+    app.get("/api/v1/songs/:id", function(req, res){
         Song.findById(req.params.id, function(err, foundSong){
             if(!err) {
                 res.json(foundSong);
@@ -164,7 +164,7 @@ conn.once('open', function() {
         })
     });
 
-    app.get("/songs/:id/play", function(req, res) {
+    app.get("/api/v1/songs/:id/play", function(req, res) {
         Song.findById(req.params.id, function(err, song){
             if(song) {
                 //Setup stream from the GridFS 
@@ -186,7 +186,7 @@ conn.once('open', function() {
         })
     });
 
-    app.get('/queue', function(req, res){
+    app.get('/api/v1/queue', function(req, res){
         Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
                 res.json(queue.tracks)
@@ -197,7 +197,7 @@ conn.once('open', function() {
     })
 
 
-    app.get('/queue/current', function(req, res){
+    app.get('/api/v1/queue/current', function(req, res){
         Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
                 res.json(queue.tracks[queue.pos]);
@@ -207,7 +207,7 @@ conn.once('open', function() {
         });
     })
 
-    app.post('/queue/add/:id', function(req, res){
+    app.post('/api/v1/queue/add/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
         // Use only the queue for current session. 
@@ -227,7 +227,7 @@ conn.once('open', function() {
         })
     })
 
-    app.post('/queue/replace', function(req, res){
+    app.post('/api/v1/queue/replace', function(req, res){
         //Takes json payload and uses it to replace the existing queue with contents of payload. 
         // For now, just print out, and send response echoing request. 
         Queue.findOne({sessionId: req.session.id}, (err, queue) => {
@@ -256,7 +256,7 @@ conn.once('open', function() {
         })
     })
 
-    app.post('/queue/pos/:pos', function(req, res) {
+    app.post('/api/v1/queue/pos/:pos', function(req, res) {
         //Moves queue position. 
         Queue.findOne({sessionId: req.session.id}, function(err, queue){
             if(queue) {
@@ -281,7 +281,7 @@ conn.once('open', function() {
         })
     })
 
-    app.get('/queue/pos', function(req, res){
+    app.get('/api/v1/queue/pos', function(req, res){
         Queue.findOne({sessionId: req.session.id}, 'pos', function(err, queue){
             if(queue) {
                 res.send(`${queue.pos}`);
@@ -296,7 +296,7 @@ conn.once('open', function() {
     })
 
 
-    app.get("/releases/search/:by/:term", function(req, res){
+    app.get("/api/v1/releases/search/:by/:term", function(req, res){
         var term = req.params.term;
         //Use regular expression to support partial match
         var termRegex = new RegExp(escapeStringRegexp(term), "i");
@@ -320,7 +320,7 @@ conn.once('open', function() {
         })   
     });
     //Show a release
-    app.get("/releases/:id", function(req, res) {
+    app.get("/api/v1/releases/:id", function(req, res) {
         Release.findById(req.params.id, function(err, foundRelease){
             if(!err) {
                 res.json(foundRelease)
