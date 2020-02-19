@@ -50,7 +50,7 @@ Player.prototype = {
                 sound = this.queue[this.pos].howl;
             } else {
                 sound = this.queue[this.pos].howl = new Howl({
-                    src: `/songs/${this.queue[this.pos].id}/play`,
+                    src: `/api/v1/songs/${this.queue[this.pos].id}/play`,
                     html5: true,
                     onplay: function() {
                         togglePlayPause.removeClass("fa-play-circle");
@@ -110,7 +110,7 @@ Player.prototype = {
     },
     addToQueue: function(song) {
         this.queue.push(song);
-        $.post(API_PREFIX + `/queue/add/${song.id}`)
+        $.post(API_PREFIX + `/queue/add/song/${song.id}`)
     }, 
     replaceQueue: function(clientQueue) {
         if(this.queue.length > 0) {
