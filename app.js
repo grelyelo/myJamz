@@ -71,13 +71,14 @@ const Release = mongoose.model("release", releaseSchema);
 
 const songSchema = new mongoose.Schema({
     artist: String,
+    pos: Number,
     title: String,
-    inReleases: [{type: mongoose.Schema.Types.ObjectId, ref: 'release'}],
-    songData: mongoose.Schema.Types.ObjectId // Link to the song file in GridFS
+    songData: mongoose.Schema.Types.ObjectId,
+    inReleases: [{type: mongoose.Schema.Types.ObjectId, ref: 'release'}]
 });
 const Song    = mongoose.model("song", songSchema);
 
-//RESTful routes 
+//RESTful routes     
 conn.once('open', function() {
     let gfs = new mongoose.mongo.GridFSBucket(conn.db);//Using fs.files collection (default) to get the song data. 
     //Index Redirect
