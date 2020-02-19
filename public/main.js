@@ -118,7 +118,7 @@ Player.prototype = {
         }
         this.queue = clientQueue;
         this.pos   = 0;
-        let serverQueue = JSON.stringify(Array.from(clientQueue, x => `${x.id}`));
+        let serverQueue = JSON.stringify(Array.from(clientQueue, x => x.id));
 
         $.ajax(API_PREFIX + '/queue/replace', {
             type: 'POST',
@@ -251,9 +251,12 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
     // replace the queue for the player and play the song. 
     anyResults.on('click', 'i', function(event) {
         event.preventDefault();
-        console.log(player.queue);
-        let id = $(this).parent('.songResult').attr('data-id');
-        player.replaceQueue([{id: id, howl: null}]);
+        //Unsorted array of songs. 
+        let songElems =  $.makeArray($(this).parent('.songResult').siblings()).concat($(this).parent('.songResult')[0]);
+        let songIDs = Array.from(songElems, song => {
+            return {id: $(song).attr('data-id'), howl: null}
+        })
+        player.replaceQueue(songIDs);
     })
 
     // Add song to queue when we click on it. 
