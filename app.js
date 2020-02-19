@@ -221,7 +221,7 @@ conn.once('open', function() {
         });
     })
 
-    app.post('/api/v1/queue/add/:id', function(req, res){
+    app.post('/api/v1/queue/add/song/:id', function(req, res){
         // Add a song with id to queue. 
         // First, check if we have a queue, if we don't, then add one. 
         // Use only the queue for current session. 
