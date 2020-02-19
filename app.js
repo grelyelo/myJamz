@@ -128,6 +128,20 @@ conn.once('open', function() {
         res.render("new")
     });
 
+    //Get single album page
+    app.get('/releases/:id', function(req, res) {
+        Release
+            .findById(req.params.id)
+            .populate('tracks')
+            .exec(function(err, release) {
+                if(release) {
+                    res.render("release", {songs: release.tracks})
+                } else {
+                    res.status(404);
+                    res.send('error: release not found');
+                }
+            })
+    })
 
     //Search for songs based on some criteria
     app.get("/api/v1/songs/search/:by/:term", function(req, res){
