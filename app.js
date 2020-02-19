@@ -247,6 +247,26 @@ conn.once('open', function() {
         })
     })
 
+    //Replace queue with tracks from a release
+    app.post('/api/v1/queue/add/release/:id', function(req, res){
+        console.log("hit /api/v1/queue/add/release/:id route")
+        Queue.findOne({sessionId: req.session.id}, (err, queue) => {
+            if(!queue) {
+                var queue = new Queue({
+                    sessionId: req.session.id
+                });
+            }
+                // Get the tracks as an array of the songs
+            Release.findById(req.params.id, function(err, release) {
+                Song.populate(release.tracks, {path: 'track'}, function(err, tracks){
+                    let newTracks = tracks.map( x => x.track._id);
+                    queue.tracks = newTracks;
+                    queue.save();
+                    res.redirect('/api/v1/queue');
+                })
+            })
+        })
+    })
     app.post('/api/v1/queue/replace', function(req, res){
         //Takes json payload and uses it to replace the existing queue with contents of payload. 
         // For now, just print out, and send response echoing request. 
