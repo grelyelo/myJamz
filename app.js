@@ -136,18 +136,18 @@ conn.once('open', function() {
 
     //Get single album page
     app.get('/releases/:id', function(req, res) {
-        Release
-            .findById(req.params.id)
-            .populate('tracks')
-            .exec(function(err, release) {
+        Release.findById(req.params.id, function(err, release){
                 if(release) {
-                    res.render("release", {songs: release.tracks})
+                    Song.populate(release.tracks, {path: 'track'}, function(err, tracks){
+                        let songs = tracks.map( x => x.track);
+                        res.render("release", {songs: songs});
+                    })
                 } else {
                     res.status(404);
                     res.send('error: release not found');
                 }
             })
-    })
+        })
 
     //Search for songs based on some criteria
     app.get("/api/v1/songs/search/:by/:term", function(req, res){
