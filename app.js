@@ -58,7 +58,12 @@ const Queue = mongoose.model('queue', queueSchema);
 //Schema for individual songs
 const releaseSchema = new mongoose.Schema({
     title: String,
-    tracks: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}],
+    tracks: [
+        {
+            track: {type: mongoose.Schema.Types.ObjectId, ref: 'song'}, 
+            pos: Number
+        }
+    ],
     releaseArt: [{type: mongoose.Schema.Types.ObjectId, ref: 'picture'}]
 });
 const Release = mongoose.model("release", releaseSchema);
