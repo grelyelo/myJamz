@@ -191,8 +191,14 @@ function getSearchResults(rootEndpoint, search) {
 
 function fillSongs(songs, element) {
     element.empty();
+    let sortedSongs = [];
     songs.forEach(song => {
-        element.append(`<li data-id="${song._id}" class='songResult'><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
+        if(song) {
+            sortedSongs[song.pos] = song;
+        }
+    });
+    sortedSongs.forEach( song => {
+        element.append(`<li data-id="${song._id}" class='songResult' data-pos="${song.pos}"><i class="fas fa-play-circle"></i>${song.artist} - ${song.title}</li>`);
     });
 }
 
@@ -252,10 +258,15 @@ mainPlayer.then(player => { // Bind the listeners once we have loaded the player
     anyResults.on('click', 'i', function(event) {
         event.preventDefault();
         //Unsorted array of songs. 
-        let songElems =  $.makeArray($(this).parent('.songResult').siblings()).concat($(this).parent('.songResult')[0]);
+        let songElems =  $.makeArray($(this).parent('.songResult')).concat(
+                            $.makeArray($(this).parent('.songResult').nextAll())
+                        )
+        console.log(songElems);
+
         let songIDs = Array.from(songElems, song => {
             return {id: $(song).attr('data-id'), howl: null}
         })
+        console.log(songIDs);
         player.replaceQueue(songIDs);
     })
 
